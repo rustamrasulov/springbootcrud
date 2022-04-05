@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.PresentationDirection;
+import javax.validation.Valid;
 
 @Controller
 public class UserController {
@@ -32,7 +33,10 @@ public class UserController {
     }
 
     @PostMapping(value = "/new")
-    public String saveNewUser (User user) {
+    public String saveNewUser (@Valid User user, BindingResult result) {
+        if (result.hasErrors()) {
+            return "redirect:/new";
+        }
         userService.saveUser(user);
         return "redirect:/";
     }
@@ -45,7 +49,11 @@ public class UserController {
     }
 
     @PutMapping(value = "/edit/{id}")
-    public String updateUser(@PathVariable("id") Long id, User user) {
+    public String updateUser(@PathVariable("id") Long id, @Valid User user, BindingResult result) {
+        if (result.hasErrors()) {
+            return "redirect:/edit/{id}";
+        }
+
         userService.saveUser(user);
         return "redirect:/";
     }
